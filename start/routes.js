@@ -60,3 +60,28 @@ Route.post("/albums/:id/song/add", async ({request,params}) => {
   return song
 
 })
+
+Route.put("/albums/:id/photo", async ({ request, params}) => {
+
+  const image =  request.file("album_image", {
+    types: ["image"],
+    size: "2mb"
+  })
+
+  await image.move("public/uploads", {
+    name: `${new Date().getTime()}.jpg`
+  })
+  const pathImage = `http://localhost:3333/uploads/${image.fileName}`
+
+  const album = await Album.find(params.id)
+  album.imagem = pathImage
+  await album.save()
+
+  return album
+
+})
+
+Route.delete("/song/:id" , async ({params}) => {
+  const song = await Song.find(params.id)
+  return song.delete()
+})
